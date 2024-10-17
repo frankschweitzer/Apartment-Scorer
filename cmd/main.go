@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -17,8 +18,25 @@ func fetchPlacesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	category := r.URL.Query().Get("category")
+	if category == "" {
+		http.Error(w, "Category is required", http.StatusBadRequest)
+		return
+	}
+
+	// Convert address to coordinates
+	lat, lon, err := services.FetchLatLonFromAddress(address)
+	if err != nil {
+		http.Error(w, "Error locating coordinates", http.StatusInternalServerError)
+		return
+	}
+
+	// Use the address to convert it to lat and lon to get a circular filter
+	radiusMeters := 500
+	filter := fmt.Sprintf("circle:%f,%f,%d", lon, lat, radiusMeters)
+
 	// Call the FetchNearbyPlaces service
-	places, err := services.FetchNearbyPlaces(address)
+	places, err := services.FetchNearbyRestaurants(category, filter)
 	if err != nil {
 		http.Error(w, "Error fetching places", http.StatusInternalServerError)
 		return
