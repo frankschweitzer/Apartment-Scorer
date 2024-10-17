@@ -10,14 +10,14 @@ import (
 
 // Handler to fetch nearby places
 func fetchPlacesHandler(w http.ResponseWriter, r *http.Request) {
-	// Get address from query params
+	// Parse query params
 	address := r.URL.Query().Get("address")
 	if address == "" {
 		http.Error(w, "Address is required", http.StatusBadRequest)
 		return
 	}
 
-	// Call the FetchNearbyPlaces function
+	// Call the FetchNearbyPlaces service
 	places, err := services.FetchNearbyPlaces(address)
 	if err != nil {
 		http.Error(w, "Error fetching places", http.StatusInternalServerError)
@@ -32,7 +32,7 @@ func fetchPlacesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	// Define a route
+	// Define routes
 	http.HandleFunc("/nearby-places", fetchPlacesHandler)
 
 	// Start the server
