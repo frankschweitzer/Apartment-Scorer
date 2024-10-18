@@ -36,7 +36,7 @@ func fetchPlacesHandler(w http.ResponseWriter, r *http.Request) {
 	filter := fmt.Sprintf("circle:%f,%f,%d", lon, lat, radiusMeters)
 
 	// Call the FetchNearbyPlaces service
-	places, err := services.FetchNearbyRestaurants(category, filter)
+	places, err := services.FetchNearbyPlaces(category, filter)
 	if err != nil {
 		http.Error(w, "Error fetching places", http.StatusInternalServerError)
 		return

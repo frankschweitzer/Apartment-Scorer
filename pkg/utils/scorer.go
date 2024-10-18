@@ -1,4 +1,4 @@
-package services
+package utils
 
 func CalculateApartmentScore(address string) int {
 	// Logic to score based on proximity to gyms, grocery stores, etc.

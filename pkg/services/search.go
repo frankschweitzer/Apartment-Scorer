@@ -14,7 +14,7 @@ import (
 )
 
 // Sample function to search for restaurants near an address
-func FetchNearbyRestaurants(category, filter string) ([]models.Place, error) {
+func FetchNearbyPlaces(category, filter string) ([]models.Place, error) {
 	// Load the API key from the .env file
 	err := godotenv.Load()
 	if err != nil {
