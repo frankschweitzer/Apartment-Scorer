@@ -9,6 +9,21 @@ import (
 	"github.com/frankschweitzer/Apartment-Scorer/pkg/services"
 )
 
+// CORS Middleware
+func enableCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Set CORS headers
+		w.Header().Set("Access-Control-Allow-Origin", "*") // Allow any origin
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 // Handler to fetch nearby places
 func fetchPlacesHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse query params
@@ -51,11 +66,15 @@ func fetchPlacesHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	// Define routes
-	http.HandleFunc("/nearby-places", fetchPlacesHandler)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/nearby-places", fetchPlacesHandler)
+
+	// Enable CORS middleware
+	handler := enableCORS(mux)
 
 	// Start the server
 	log.Println("Starting server on :8080...")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe(":8080", handler); err != nil {
 		log.Fatal(err)
 	}
 }
